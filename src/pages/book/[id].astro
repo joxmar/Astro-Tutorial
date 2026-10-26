@@ -1,0 +1,66 @@
+---
+import Layout from "../../layouts/Layout.astro"
+
+// Import the SHOW_BUY_BUTTON environment variable from the server context found on .env
+import { SHOW_BUY_BUTTON } from 'astro:env/server';
+// Import the BookScore component to display the book score fetched from the SCORE_API_ENDPOINT
+import BookScore from '../../components/BookScore.astro';
+// Import the BuyButton component to display the purchase options for the book
+import BuyButton from '../../components/BuyButton.astro';
+
+// This page displays the details of a single book based on its ID
+import { getCollection, render } from 'astro:content'; // used to fetch the book collection and render the book content
+
+// getStaticPaths: defines the dynamic routes for this page based on the book IDs
+export async function getStaticPaths() {
+  const books = await getCollection('books'); // fetch all books from the collection
+  return books.map(book => ({ 
+    params: { id: book.id }, // define the dynamic route parameter based on the book ID
+    props: { book }, // pass the book data as props to the page
+  }))
+}
+const { book } = Astro.props; // get the book data from the page props
+const { data, id } = book; // destructure the data and id from the book object
+const {title, author, img, description, buy} = data; // destructure the title, author, img, description, and buy from the data object
+
+// get the rendered content for the book
+const { Content } = await render(book);
+
+export const prerender = true; // this enables static prerendering for the page
+
+---
+
+<Layout title={`${title}`}>
+<main>
+  <section class="astro-container">
+    <div class="w-full">
+      <a href="/" class="text-indigo-600">&lt; Back to books</a>
+    </div>
+    <div class="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2">
+      <div class="lg:pt-4 lg:pr-8">
+        <div class="lg:max-w-lg">
+          <h2 class="text-base/7 font-semibold text-indigo-600">{author}</h2>
+          <p class="my-2 text-4xl font-semibold tracking-tight text-pretty sm:text-5xl" transition:name={`title-${id}`}>{title}</p>
+          
+          <!-- Display the book score using the BookScore component -->
+           <!-- server:defer indicates that this component should be rendered on the server and deferred until needed -->
+          <BookScore server:defer id={`${id}`}>
+            <!-- Fallback content to display while the dynamic book score is being loaded -->
+            <p slot="fallback" class="mb-5 opacity-50">Loading...</p>
+          </BookScore> 
+          <p class="mt-6 text-lg/8 mb-5">{description}</p>
+          
+          <!-- Buy buttons for the book, displayed only if SHOW_BUY_BUTTON is true -->
+          {SHOW_BUY_BUTTON && <BuyButton server:defer buy={buy} />}
+
+          <hr class="my-10 border-indigo-600" />
+          <div class="book-details">
+            <Content/>
+          </div>
+        </div>
+      </div>
+      <img src={`/${img}`} alt={`Cover of ${title}`} class=" rounded-xl shadow-xl ring-1 ring-gray-400/10 sm:w-228 md:-ml-4 lg:ml-0" transition:name={`img-${id}`} />
+    </div>
+  </section>
+</main>
+</Layout>

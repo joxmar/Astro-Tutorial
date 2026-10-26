@@ -1,0 +1,9 @@
+---
+// Components/islands: BookScore component to display the book score fetched from the SCORE_API_ENDPOINT
+import { SCORE_API_ENDPOINT } from 'astro:env/server';
+const res = await fetch(SCORE_API_ENDPOINT);
+const scoreValue = await res.text();
+---
+<p class="mb-5" id="score">
+  ⭐️ {scoreValue.trim()}/5
+</p>

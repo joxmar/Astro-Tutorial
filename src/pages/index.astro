@@ -1,0 +1,53 @@
+---
+// this is how we import and use the Layout component in Astro
+import Layout from "../layouts/Layout.astro"
+
+// getCollection: fetches all content files from a specific collection (like 'books')
+import { getCollection } from 'astro:content';
+// books: contains all the content files from the 'books' collection
+const books = await getCollection('books');
+
+export const prerender = true; // this enables static prerendering for the page
+
+//console.log(books); // this console log runs on terminal during build time. Not on the browser
+---
+
+<!-- Layout is used to wrap the page content and provide a consistent layout -->
+<Layout title="Home">
+  <main>
+    <section class="astro-container mb-20">
+		  <h1 class="text-7xl font-bold text-center">Book store</h1>		
+    </section>
+    
+    <section class="astro-container">
+      <div class="grid gap-6 md:grid-cols-2">
+        <!-- Here we will loop through the books collection and display each book -->
+         {
+          books.map(book => {
+            const { id, data} = book // here we destructure the id and data from the book object. the id becomes the unique identifier for the book
+            const { title, author, img, description, buy } = data // here we destructure the title, author, img, and buy from the data object
+
+            console.log(id)
+            // now we can use the destructured values to render the book information
+            return (
+              // the id uses the markdown file's slug as the unique identifier
+              <a href={`/book/${id}`} class="md:flex gap-10">
+                <img 
+                src={`/${img}`}
+                alt={title} 
+                class="mb-4 max-w-50 rounded-xl aspect-[3/4] object-cover" 
+                transition:name={`img-${id}`}
+                />
+                <div>
+                  <h2 class="text-2xl font-bold mb-2" transition:name={`title-${id}`}>{title}</h2>
+                  <p class="mb-2">Author: {author}</p>
+                  <p class="mb-2">{description}</p>
+                </div>
+              </a>
+            )
+          })
+         }
+      </div>
+    </section>
+  </main>
+</Layout>

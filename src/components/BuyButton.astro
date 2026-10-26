@@ -1,0 +1,14 @@
+---
+const USA = 'US';
+
+// const country = Astro.request.headers.get('cf-ipcountry') ?? 'US';
+const country = Astro.request.headers.get('CF-IPCountry') ?? 'US';
+
+const storeCountry = country === USA ? 'usa' : 'world';
+const countryName = country === USA ? 'United States' : 'Worldwide';
+
+const { buy } = Astro.props;
+const url = buy[storeCountry];
+---
+
+<a href={url} class="rounded-full bg-indigo-600 px-4 py-2.5 inline-block font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Buy Now {countryName}</a>

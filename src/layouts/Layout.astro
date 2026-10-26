@@ -1,0 +1,26 @@
+---
+import {ClientRouter} from 'astro:transitions';
+
+// Layout.astro is a layout component that wraps page content and provides a consistent layout across the site
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+ import '../styles/global.css' 
+---
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" href="/favicon.ico" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+		<ClientRouter />
+	</head>
+	<body class="bg-slate-950 text-white pt-24">
+    	<!-- slot is where the page content will be injected -->
+		<slot />
+	</body>
+</html>
