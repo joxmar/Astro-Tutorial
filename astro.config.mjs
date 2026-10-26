@@ -5,6 +5,8 @@ import tailwindcss from '@tailwindcss/vite';
 
 import node from '@astrojs/node';
 
+import cloudflare from '@astrojs/cloudflare';
+
 // https://astro.build/config
 export default defineConfig({
   // Configure Astro to output a server-rendered application
@@ -24,7 +26,5 @@ export default defineConfig({
     },
   },
 
-  adapter: node({
-    mode: 'standalone',
-  }),
+  adapter: cloudflare(),
 });
